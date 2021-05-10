@@ -1,0 +1,27 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Starting Bid</th>
+            <th>URL</th>
+            <th>Category</th>
+            <th>Seller</th>
+        </tr>
+            {% for item in query_results %}
+        <tr>
+            <td>{{ item.title }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.starting_bid }}</td>
+            <td><a href="{{ item.url }}">{{ item.url }}</a></td> 
+            <td>{{ item.category }}</td>
+            <td>{{ item.user }}</td>
+        </tr> 
+            {% endfor %}
+    </table>
+
+{% endblock %}
