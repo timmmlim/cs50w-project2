@@ -1,27 +1,25 @@
-{% extends "auctions/layout.html" %}
+{% extends "auctions/layout.html" %} it
 
 {% block body %}
     <h2>Active Listings</h2>
 
-    <table>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Starting Bid</th>
-            <th>URL</th>
-            <th>Category</th>
-            <th>Seller</th>
-        </tr>
-            {% for item in query_results %}
-        <tr>
-            <td>{{ item.title }}</td>
-            <td>{{ item.description }}</td>
-            <td>{{ item.starting_bid }}</td>
-            <td><a href="{{ item.url }}">{{ item.url }}</a></td> 
-            <td>{{ item.category }}</td>
-            <td>{{ item.user }}</td>
-        </tr> 
-            {% endfor %}
-    </table>
+    <div class="d-flex flex-wrap">
+        {% for listing in query_results %}
+        <div class="card p-4 m-2 col-lg-3 col-md-4 col-sm-12" onclick='location.href="{% url 'listing' listing.id %}"'>
+            <h4 id='listing-title' class='listing-box'>{{ listing.title }}</h4>
 
+            {% if listing.listing_img %}
+                <img src="{{ listing.listing_img.url }}">
+            {% else %}
+                no image exists
+            {% endif %}
+            <h5>
+                {{ listing.curr_bid }}
+            </h5>
+
+            <p>Description: {{ listing.description }}</p>
+            <a>Category: {{ listing.category }}</p>
+        </div>
+    </div>
+    {% endfor %}
 {% endblock %}

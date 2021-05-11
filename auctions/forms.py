@@ -4,4 +4,7 @@ from .models import Listing
 class ListingForm(forms.ModelForm):
     class Meta:
         model = Listing
-        fields = ['title', 'description', 'start_bid', 'url', 'category']
+        exclude = ['seller', 'curr_bid', 'watchers', 'create_time']
+
+    def clean(self):
+        cleaned_data = super().clean()

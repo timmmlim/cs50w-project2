@@ -1,13 +1,27 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %} {{ listing.title }} {% endblock %}
+
 {% block body %}
+    <h1>{{ listing.title }}</h1>
 
-    <h2>Create your listing!</h2>
+   {% if listing.listing_img %}
+        <img style="width: 30%; height:10%" class="my-2" src="{{ listing.listing_img.url }}">
+    {% endif %}
 
-    <form action="{% url 'listing' %}" method="post">
-        {% csrf_token %}
-        {{ form.as_ul  }}
-        <input type="submit" value="Submit">
-    </form>
+    <p> {{ listing.description }} </p>
+
+    <!-- Watchlist -->
+    {% if request.user.is_authenticated %}
+        <form method="POST" action="{% url 'update_watchlist' listing.id %}" class="form-inline">
+            {% csrf_token %}
+            {% if listing in request.user.watchlist.all %}
+                <input class='btn btn-secondary btn-sm' type='submit' value='Remove from Watchlist' />
+            {% else %}
+                <input class='btn btn-secondary btn-sm' type='submit' value='Add to Watchlist' />
+            {% endif %}
+        </form>
+    {% endif %}
+    <!-- Bids -->
 
 {% endblock %}

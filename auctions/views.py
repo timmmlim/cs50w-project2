@@ -9,8 +9,16 @@ from .forms import ListingForm
 
 
 def index(request):
+
     query_results = Listing.objects.all()
-    return render(request, "auctions/index.html", {'query_results': query_results})
+    
+    if request.user.is_authenticated:
+        user = User.objects.get(username=request.user)
+        user_watchlist = user.watchlist.all()
+        return render(request, "auctions/index.html", {'query_results': query_results, 'user_watchlist': user_watchlist})
+
+    else:
+        return render(request, "auctions/index.html", {'query_results': query_results})
 
 
 def login_view(request):
@@ -65,12 +73,14 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
-def listing_view(request):
+def create_listing(request):
 
     if request.method == 'POST':
-        form = ListingForm(request.POST)
+        form = ListingForm(request.POST, request.FILES)
+        print(request.FILES)
         post = form.save(commit=False)  # do something with form before saving
-        post.user = request.user
+        post.seller = request.user
+        post.curr_bid = post.start_bid
         post.save()
         '''
         declare other variables
@@ -79,4 +89,26 @@ def listing_view(request):
 
     else:
         form = ListingForm()
-        return render(request, "auctions/listing.html", {'form': form})
+        return render(request, "auctions/create_listing.html", {'form': form})
+
+def listing(request, listing_id):
+
+    try:
+        listing = Listing.objects.get(id=listing_id)
+    except:
+        return HttpResponseRedirect(reverse('index'))
+
+    return render(request, 'auctions/listing.html', {'listing': listing})
+
+def update_watchlist(request, listing_id):
+    if request.method == "POST":
+        listing = Listing.objects.get(id=listing_id)
+        watchlist = request.user.watchlist
+        if listing in watchlist.all():
+            watchlist.remove(listing)
+        else:
+            watchlist.add(listing)
+    
+    return HttpResponseRedirect(reverse("listing", kwargs={"listing_id": listing_id}))
+
+

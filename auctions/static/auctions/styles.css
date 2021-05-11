@@ -10,3 +10,8 @@ table{
 td {
     padding: 10px 0;
 }
+
+.listing-img{
+    width: 20%;
+    height: 20%;
+}
