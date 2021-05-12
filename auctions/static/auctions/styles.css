@@ -11,7 +11,7 @@ td {
     padding: 10px 0;
 }
 
-.listing-img{
-    width: 20%;
-    height: 20%;
+img{
+    max-width: 100%;
+    max-height: 100%;
 }

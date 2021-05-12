@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %} it
+
+{% block body %}
+    <h2>{{ user_pretty_name }}'s Watchlist</h2>
+
+    <div class="d-flex flex-wrap">
+
+        {% if user_watchlist %}
+            {% for listing in user_watchlist %}
+            <div class="card p-4 m-2 col-lg-3 col-md-4 col-sm-12" onclick='location.href="{% url 'listing' listing.id %}"'>
+                <h4 id='listing-title' class='listing-box'>{{ listing.title }}</h4>
+
+                {% if listing.listing_img %}
+                    <img src="{{ listing.listing_img.url }}">
+                {% else %}
+                    no image exists
+                {% endif %}
+                <h5>
+                    {{ listing.curr_bid }}
+                </h5>
+
+                <p>Description: {{ listing.description }}</p>
+                <a>Category: {{ listing.category }}</p>
+            </div>
+            {% endfor %}
+
+        {% else %}
+            <p>{{ user_pretty_name }}'s watchlist is empty!</p>
+        
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html" %} it
+
+{% block body %}
+    <h2>Categories</h2>
+
+    <div class="d-flex flex-wrap">
+
+        {% for category in categories %}
+        <div class="card p-4 m-2 col-lg-3 col-md-4 col-sm-12" onclick='location.href="{% url 'category' category %}"'>
+            <h4 id='listing-title' class='listing-box'>{{ category }}</h4>
+        </div>
+        {% endfor %}
+
+    </div>
+{% endblock %}
