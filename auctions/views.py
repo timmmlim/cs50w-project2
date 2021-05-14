@@ -3,10 +3,10 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib import messages
 
-from .models import User, Listing
-from .forms import ListingForm
-
+from .models import User, Listing, Bid, Comment
+from .forms import ListingForm, BidForm, CommentForm
 
 def index(request):
 
@@ -67,22 +67,21 @@ def register(request):
 
 
 def create_listing(request):
+    form = ListingForm(request.POST or None, request.FILES or None)
 
     if request.method == 'POST':
-        form = ListingForm(request.POST, request.FILES)
-        print(request.FILES)
-        post = form.save(commit=False)  # do something with form before saving
-        post.seller = request.user
-        post.curr_bid = post.start_bid
-        post.save()
-        '''
-        declare other variables
-        '''
-        return HttpResponseRedirect(reverse("index"))
+        # check if valid values are passed
+        if form.is_valid():
+            post = form.save(commit=False)  # do something with form before saving
+            post.seller = request.user
+            post.curr_bid = post.start_bid
+            post.save()
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            messages.error(request, 'Invalid values encountered!')
 
-    else:
-        form = ListingForm()
-        return render(request, "auctions/create_listing.html", {'form': form})
+    return render(request, "auctions/create_listing.html", {'form': form})
+
 
 def listing(request, listing_id):
     '''
@@ -93,7 +92,23 @@ def listing(request, listing_id):
     except:
         return HttpResponseRedirect(reverse('index'))
 
-    return render(request, 'auctions/listing.html', {'listing': listing})
+    # get current bids for listing
+    # if bids exists, return the highest bid. else return the starting bid
+    listing_bids = listing.listing_bids.all()
+
+    if listing_bids:
+        curr_bid = listing_bids.order_by('-value').first().value
+
+    else:
+        curr_bid = listing.start_bid
+
+    # comments
+    comments = listing.listing_comments.all()
+    return render(request, 'auctions/listing.html', {'listing': listing, 'curr_bid': curr_bid,
+                                                      'bid_form': BidForm(initial={'listing': listing_id}),
+                                                      'comment_form': CommentForm(initial={'listing': listing_id}),
+                                                      'comments': comments})
+
 
 def watchlist(request):
     '''
@@ -139,4 +154,29 @@ def category(request, category_id):
         return render(request, 'auctions/category.html', {'listings': listings, 'category': category_id.capitalize()})
 
 
+def bid(request, listing_id):
+    form = BidForm(request.POST or None)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            post = form.save(commit=False)  # do something with form before saving
+            post.bidder = request.user
+            post.save()
+            messages.success(request, 'You are now the highest bidder!')
 
+        else:
+            messages.error(request, 'Please enter a valid value for bid!')
+
+    return HttpResponseRedirect(reverse("listing", kwargs={"listing_id": listing_id}))
+
+
+def comment(request, listing_id):
+    form = CommentForm(request.POST or None)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+
+    return HttpResponseRedirect(reverse("listing", kwargs={"listing_id": listing_id}))

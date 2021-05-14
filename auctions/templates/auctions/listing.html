@@ -5,12 +5,6 @@
 {% block body %}
     <h1>{{ listing.title }}</h1>
 
-   {% if listing.listing_img %}
-        <img style="width: 30%; height:10%" class="my-2" src="{{ listing.listing_img.url }}">
-    {% endif %}
-
-    <p> {{ listing.description }} </p>
-
     <!-- Watchlist -->
     {% if request.user.is_authenticated %}
         <form method="POST" action="{% url 'update_watchlist' listing.id %}" class="form-inline">
@@ -21,7 +15,54 @@
                 <input class='btn btn-secondary btn-sm' type='submit' value='Add to Watchlist' />
             {% endif %}
         </form>
-    {% endif %}
-    <!-- Bids -->
 
+        {% if listing.listing_img %}
+            <img style="width: 30%; height:10%" class="my-2" src="{{ listing.listing_img.url }}">
+        {% endif %}
+
+        <p> {{ listing.description }} </p>
+    
+    <!-- Bids -->
+        <form method="POST" class='form-group' action="{% url 'bid' listing.id %}">
+            {% csrf_token %}
+            <h2>${{ curr_bid }}</h2>
+            {{ bid_form }}
+            <input class='btn btn-secondary btn-sm' type='submit' value='Add Bid' />
+        </form>
+    
+    <!-- Comments -->
+        <div class="container">
+            <div class='row'>
+                <div>
+                    <h3>{{ comments|length }} Comments</h3>
+                </div>
+            </div>
+
+            <div class="comments-list">
+                {% for comment in comments %}
+                    <div>
+                        <h4>{{ comment.user }} <span>-{{ comment.create_time }}</span></h4>
+                        <br>
+                        <p>{{ comment.text }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <form method='POST' class='form-group'  action="{% url 'comment' listing.id %}">
+            {% csrf_token %}
+            {{ comment_form }}
+            <input class='btn btn-secondary btn-sm' type='submit' value='Comment' />
+        </form>
+
+    <!-- Messages -->
+            {% if messages %}
+            
+                {% for msg in messages %}
+                <script>
+                    alert('{{ msg }}')
+                </script>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
 {% endblock %}
