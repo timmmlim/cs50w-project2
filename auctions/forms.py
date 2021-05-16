@@ -16,6 +16,9 @@ class BidForm(forms.ModelForm):
         widgets = {
             'listing': forms.HiddenInput()
         }
+        labels = {
+            'value': 'Enter your bid'
+        }
 
     def clean(self):
         cleaned_data = super().clean()
@@ -38,6 +41,13 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['text', 'listing']
+
         widgets = {
-            'listing': forms.HiddenInput()
+            'listing': forms.HiddenInput(),
+            'text': forms.TextInput(attrs={'id': 'comment-field'})
         }
+
+        labels = {
+            'text': ''
+        }
+        

@@ -16,6 +16,26 @@ img{
     max-height: 100%;
 }
 
-h4 span {
-    font-size:16px; 
+#comment h6,
+#comment span {
+    display:inline;
+    vertical-align:top;
+    margin-right: 50px;
+}
+
+#comment p{
+    margin-top: 15px;
+}
+
+#comment div{
+    border: 5px solid #140101
+}
+
+.container{
+    margin-left: 0px;
+}
+
+#comment-field{
+ width: 800px;
+ height: 145px;   
 }

@@ -32,16 +32,17 @@
     
     <!-- Comments -->
         <div class="container">
-            <div class='row'>
+            <div class='row' style="margin-bottom: 15px">
                 <div>
-                    <h3>{{ comments|length }} Comments</h3>
+                    <h4>{{ comments|length }} Comments</h4>
                 </div>
             </div>
 
-            <div class="comments-list">
+            <div id="comments-list">
                 {% for comment in comments %}
-                    <div>
-                        <h4>{{ comment.user }} <span>-{{ comment.create_time }}</span></h4>
+                    <div id="comment">
+                        <h6>{{ comment.user }}</h6>
+                        <span>{{ comment.create_time }}</span>
                         <br>
                         <p>{{ comment.text }}</p>
                     </div>
@@ -49,11 +50,14 @@
             </div>
         </div>
 
+        <div>
         <form method='POST' class='form-group'  action="{% url 'comment' listing.id %}">
             {% csrf_token %}
             {{ comment_form }}
-            <input class='btn btn-secondary btn-sm' type='submit' value='Comment' />
+            <br>
+            <input id='comment-button' class='btn btn-secondary btn-sm' type='submit' value='Comment' />
         </form>
+        </div>
 
     <!-- Messages -->
             {% if messages %}
@@ -62,7 +66,7 @@
                 <script>
                     alert('{{ msg }}')
                 </script>
-            {% endfor %}
-        {% endif %}
+                {% endfor %}
+            {% endif %}
     {% endif %}
 {% endblock %}

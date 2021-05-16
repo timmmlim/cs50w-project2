@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -121,7 +122,7 @@ def watchlist(request):
     else:
         return HttpResponseRedirect(reverse("index"))
 
-
+@login_required
 def update_watchlist(request, listing_id):
     '''
     adds / removes listings from the current user's watchlist
@@ -154,6 +155,7 @@ def category(request, category_id):
         return render(request, 'auctions/category.html', {'listings': listings, 'category': category_id.capitalize()})
 
 
+@login_required
 def bid(request, listing_id):
     form = BidForm(request.POST or None)
     
@@ -170,6 +172,7 @@ def bid(request, listing_id):
     return HttpResponseRedirect(reverse("listing", kwargs={"listing_id": listing_id}))
 
 
+@login_required
 def comment(request, listing_id):
     form = CommentForm(request.POST or None)
 
